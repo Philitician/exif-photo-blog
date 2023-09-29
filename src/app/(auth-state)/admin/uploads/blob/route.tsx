@@ -12,6 +12,8 @@ export const runtime = "edge";
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
 
+  console.log("request", request);
+
   try {
     const jsonResponse = await handleUpload({
       body,
