@@ -1,12 +1,13 @@
-import { revalidatePhotosAndBlobTag } from '@/cache';
+import { revalidatePhotosAndBlobTag } from "@/cache";
 import {
   ACCEPTED_PHOTO_FILE_TYPES,
   isUploadPathnameValid,
-} from '@/services/blob';
-import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
-import { NextResponse } from 'next/server';
+} from "@/services/blob";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 
-export const runtime = 'edge';
+import { NextResponse } from "next/server";
+
+export const runtime = "edge";
 
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
@@ -22,21 +23,22 @@ export async function POST(request: Request): Promise<NextResponse> {
             allowedContentTypes: ACCEPTED_PHOTO_FILE_TYPES,
           };
         } else {
-          throw new Error('Invalid upload');
+          throw new Error("Invalid upload");
         }
       },
       // This argument is required, but doesn't seem to fire
-      onUploadCompleted: async () => {
+      onUploadCompleted: async (options) => {
+        console.log(options);
         revalidatePhotosAndBlobTag();
       },
     });
-    revalidatePhotosAndBlobTag();
+
     return NextResponse.json(jsonResponse);
   } catch (error) {
     revalidatePhotosAndBlobTag();
     return NextResponse.json(
       { error: (error as Error).message },
-      { status: 400 },
+      { status: 400 }
     );
   }
 }
