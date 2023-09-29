@@ -28,10 +28,12 @@ export async function POST(request: Request): Promise<NextResponse> {
       },
       // This argument is required, but doesn't seem to fire
       onUploadCompleted: async (options) => {
-        console.log(options);
+        console.log("onUploadCompleted", options);
         revalidatePhotosAndBlobTag();
       },
     });
+
+    console.log("jsonResponse", jsonResponse);
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
